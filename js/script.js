@@ -13,7 +13,13 @@ $(document).ready(function(){
             })
         },
         error: function() {
-            alert('Es gab ein Problem beim Laden der Daten.');
+            alert('Es gab ein Problem beim Laden der Berufe.');
         }
     });
+
+    $('#dropdownBeruf').change(function() {
+        let selectedBerufId = $(this).val();
+        console.log('Ausgewählter Beruf ID: ' + selectedBerufId);
+    });
+
 });
