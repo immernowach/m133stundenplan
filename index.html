@@ -8,9 +8,21 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div>
-        <h1>BBZBL Stundenplan</h1>
+    <div class="container">
+        <h1 class="text-center my-4">BBZBL Stundenplan</h1>
+        <div class="mb-3">
+            <label for="dropdownBeruf" class="form-label">Beruf auswählen: </label>
+            <select class="form-select" id="dropdownBeruf" name="Beruf auswählen">
+                <option value="" disabled selected>Bitte auswählen</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="dropdownKlasse" class="form-label">Klasse auswählen: </label>
+            <select class="form-select" id="dropdownKlasse" name="Klasse auswählen">
+                <option value="" disabled selected>Bitte auswählen</option>
+            </select>
+        </div>
     </div>
-    <script src="js/main.js" defer></script>
+    <script src="js/script.js" defer></script>
 </body>
 </html>
