@@ -40,21 +40,66 @@ $(document).ready(function(){
         });
     });
 
-
     $('#dropdownKlasse').change(function() {
         let classId = $(this).val();
         if(classId) {
-            let view = calendar.getView();
-            let weekNumber = moment(view.intervalStart).format('ww-YYYY');
+            let weekNumber = moment(calendar.view.currentStart).format('ww-YYYY');
             updateCalendarWithClassSchedule(classId, weekNumber);
         } else {
-            $('#calendar').fullCalendar('removeEvents');
+            calendar.removeAllEvents();
         }
     });
 
     let calendar = new FullCalendar.Calendar($('#calendar')[0], {
-        initialView: 'dayGridWeek'
+        initialView: 'dayGridWeek',
+        eventContent: function(arg) {
+            let content = $('<div>').css('display', 'flex').css('justify-content', 'space-between');
+            let timeDiv = $('<div>').text(arg.timeText);
+            let titleDiv = $('<div>').addClass('title').text(arg.event.title);
+            content.append(timeDiv, titleDiv);
+            return { html: content.prop('outerHTML') };
+        },
+        eventClick: function(info) {
+            let event = info.event;
+
+            let startTime = event.start.getHours() + ':' + (event.start.getMinutes()<10?'0':'') + event.start.getMinutes();
+            let endTime = event.end.getHours() + ':' + (event.end.getMinutes()<10?'0':'') + event.end.getMinutes();
+
+            let details = `
+                <h1>${event.title}</h1>
+                <table class="table table-striped table-hover">
+                    <tr><td>Start:</td><td>${startTime}</td></tr>
+                    <tr><td>Ende:</td><td>${endTime}</td></tr>
+                    <tr><td>Lehrer:</td><td>${event.extendedProps.lehrer}</td></tr>
+                    <tr><td>Raum:</td><td>${event.extendedProps.raum}</td></tr>
+                    <tr><td>Kommentar:</td><td>${event.extendedProps.kommentar}</td></tr>
+                </table>
+            `;
+            $('#eventContent').html(details);
+            $('#eventDetails').show();
+        },
+        datesSet: function(dateInfo) {
+            let classId = $('#dropdownKlasse').val();
+            if(classId) {
+                let weekNumber = moment(dateInfo.start).format('ww-YYYY');
+                updateCalendarWithClassSchedule(classId, weekNumber);
+            }
+        }
     });
+
+    $('#close').on('click', function() {
+        $('#eventDetails').hide();
+    });
+
+    $('#dayView').on('click', function() {
+        calendar.changeView('dayGridDay');
+    });
+
+    $('#weekView').on('click', function() {
+        calendar.changeView('dayGridWeek');
+    });
+
+    calendar.setOption('locale', 'de-ch');
     calendar.render();
 
     function updateCalendarWithClassSchedule(classId, weekNumber) {
@@ -67,7 +112,6 @@ $(document).ready(function(){
             },
             dataType: 'json',
             success: function(data) {
-                console.log(classId, data);
                 calendar.removeAllEvents();
                 data.forEach(function(entry) {
                     calendar.addEvent({
@@ -81,11 +125,7 @@ $(document).ready(function(){
                         }
                     });
                 });
-            },
-            error: function() {
-                alert('Es gab ein Problem beim Laden der Stundentafel.');
             }
         });
     }
-
 });

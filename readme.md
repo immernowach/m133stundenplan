@@ -1,5 +1,5 @@
 # BBZBL Stundenplan
-_Dies ist ein Stundenplan für die BBZBL als Projekt im Modul 133_
+_Dies ist ein Stundenplan für die BBZBL als Projekt im Modul 133 Webapplikation mit Sessionhandling realisieren_
 
 
 Weiterführende Links:
