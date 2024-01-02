@@ -1,5 +1,8 @@
 $(document).ready(function(){
-    $.ajax({
+
+    //TODO: Immer wenn sich die Daten ändern, erhält der Benutzer / die Benutzerin ein visuelles Feedback. -> Ladeanimation
+
+    $.ajax({ 
         url: 'https://sandbox.gibm.ch/berufe.php',
         method: 'GET',
         dataType: 'json',
@@ -13,11 +16,11 @@ $(document).ready(function(){
             })
         },
         error: function() {
-            alert('Es gab ein Problem beim Laden der Berufe.');
+            alert('Es gab ein Problem beim Laden der Berufe.'); // TODO: Error handling
         }
     });
 
-    $('#dropdownBeruf').change(function() {
+    $('#dropdownBeruf').change(function() { // TODO: local storage
         $.ajax({
             url: 'https://sandbox.gibm.ch/klassen.php?beruf_id=' + $(this).val(),
             method: 'GET',
@@ -35,12 +38,12 @@ $(document).ready(function(){
                 })
             },
             error: function() {
-                alert('Es gab ein Problem beim Laden der Klassen.');
+                alert('Es gab ein Problem beim Laden der Klassen.'); // TODO: Error handling
             }
         });
     });
 
-    $('#dropdownKlasse').change(function() {
+    $('#dropdownKlasse').change(function() { // TODO: local storage
         let classId = $(this).val();
         if(classId) {
             let weekNumber = moment(calendar.view.currentStart).format('ww-YYYY');
@@ -125,7 +128,7 @@ $(document).ready(function(){
                         }
                     });
                 });
-            }
+            } // TODO: Error handling
         });
     }
 });
