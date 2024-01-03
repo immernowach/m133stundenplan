@@ -1,3 +1,18 @@
+/* update */
+
+@keyframes updated {
+    0% { background-color: #00b5002c; }
+    10% { background-color: #00fc0049; }
+    100% { background-color: transparent; }
+}
+
+.updated {
+    animation-name: updated;
+    animation-duration: 2.5s;
+    border-radius: 5px;
+}
+
+/* Kalender-Detailansicht */
 .custom-popup {
     display: none; 
     position: fixed; 
@@ -34,6 +49,8 @@
     cursor: pointer;
 }
 
+/* Kalender */
+
 .fc-event {
     font-size: 1.1em;
     padding: 10px;
@@ -49,6 +66,7 @@
     word-break: break-all;
 }
 
+/* responsive design */
 @media screen and (max-width: 1000px) {
     .custom-popup-content {
         width: 90%;

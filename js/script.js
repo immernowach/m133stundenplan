@@ -1,6 +1,9 @@
 $(document).ready(function(){
 
-    //TODO: Immer wenn sich die Daten ändern, erhält der Benutzer / die Benutzerin ein visuelles Feedback. -> Ladeanimation
+    function setCalendarWeek(date) {
+        let weekNumber = moment(date).week();
+        $('#calendarWeek').text('Aktuelle Kalenderwoche: ' + weekNumber);
+    }
 
     $.ajax({ 
         url: 'https://sandbox.gibm.ch/berufe.php',
@@ -105,6 +108,8 @@ $(document).ready(function(){
     calendar.setOption('locale', 'de-ch');
     calendar.render();
 
+    setCalendarWeek(new Date());
+
     function updateCalendarWithClassSchedule(classId, weekNumber) {
         $.ajax({
             url: 'https://sandbox.gibm.ch/tafel.php',
@@ -128,6 +133,10 @@ $(document).ready(function(){
                         }
                     });
                 });
+                $('#calendar').addClass('updated');
+                setTimeout(function() {
+                    $('#calendar').removeClass('updated');
+                }, 2500);
             } // TODO: Error handling
         });
     }

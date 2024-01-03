@@ -27,16 +27,18 @@
             </select>
         </div>
 
-        <div class="row">
-            <div class="col-6">
+        <table>
+            <td>
                 <button id="dayView" class="btn btn-secondary w-100">Tagesansicht</button>
-            </div>
-            <div class="col-6">
+            </td>
+            <td>
                 <button id="weekView" class="btn btn-secondary w-100">Wochenansicht</button>
-            </div>
-        </div>
+            </td>
+            <td>
+                <div id="calendarWeek"></div><!-- TODO show the currently displayed calendar week -->
+            </td>
+        </table>
 
-        <!-- TODO Kalenderwoche zeigen -->
         <div id='calendar' class="mt-4"></div>
         <div id="eventDetails" class="custom-popup">>
             <div class="custom-popup-content">
