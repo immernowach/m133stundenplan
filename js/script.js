@@ -19,7 +19,8 @@ $(document).ready(function(){
             })
         },
         error: function() {
-            alert('Es gab ein Problem beim Laden der Berufe.'); // TODO: Error handling
+            alert('Es gab ein Problem beim Laden der Berufe.');
+            console.log('Es gab ein Problem beim Laden der Berufe.');
         }
     });
 
@@ -41,7 +42,8 @@ $(document).ready(function(){
                 })
             },
             error: function() {
-                alert('Es gab ein Problem beim Laden der Klassen.'); // TODO: Error handling
+                alert('Es gab ein Problem beim Laden der Klassen.');
+                console.log('Es gab ein Problem beim Laden der Klassen.');
             }
         });
     });
@@ -137,7 +139,11 @@ $(document).ready(function(){
                 setTimeout(function() {
                     $('#calendar').removeClass('updated');
                 }, 2500);
-            } // TODO: Error handling
+            },
+            error: function() {
+                alert('Es gab ein Problem beim Laden des Stundenplans.');
+                console.log('Es gab ein Problem beim Laden des Stundenplans.');
+            }
         });
     }
 });
