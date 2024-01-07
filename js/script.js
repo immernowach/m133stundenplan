@@ -1,32 +1,46 @@
 $(document).ready(function(){
-
     function setCalendarWeek(date) {
         let weekNumber = moment(date).week();
         $('#calendarWeek').text('Aktuelle Kalenderwoche: ' + weekNumber);
     }
 
-    $.ajax({ 
-        url: 'https://sandbox.gibm.ch/berufe.php',
-        method: 'GET',
-        dataType: 'json',
-        success: function(data) {
-            let dropdown = $('#dropdownBeruf');
+    function setBerufdropdown(beruf_id) {
+        $.ajax({ 
+            url: 'https://sandbox.gibm.ch/berufe.php',
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                let dropdown = $('#dropdownBeruf');
 
-            $.each(data, function (key, entry) {
-                if(entry.beruf_name) {
-                    dropdown.append($('<option></option>').attr('value', entry.beruf_id).text(entry.beruf_name));
+                $.each(data, function (key, entry) {
+                    if(entry.beruf_name) {
+                        dropdown.append($('<option></option>').attr('value', entry.beruf_id).text(entry.beruf_name));
+                    }
+                })
+                
+                if(beruf_id) {
+                    dropdown.val(beruf_id);
                 }
-            })
-        },
-        error: function() {
-            alert('Es gab ein Problem beim Laden der Berufe.');
-            console.log('Es gab ein Problem beim Laden der Berufe.');
+            },
+            error: function() {
+                alert('Es gab ein Problem beim Laden der Berufe.');
+                console.log('Es gab ein Problem beim Laden der Berufe.');
+            }
+        });
+    }
+
+    $('#dropdownBeruf').change(function() {
+        let berufId = $(this).val();
+
+        if(berufId) {
+            localStorage.setItem('berufId', berufId);
+            setKlassenDropdown(berufId);
         }
     });
 
-    $('#dropdownBeruf').change(function() { // TODO: local storage
+    function setKlassenDropdown(berufId, classId) {
         $.ajax({
-            url: 'https://sandbox.gibm.ch/klassen.php?beruf_id=' + $(this).val(),
+            url: 'https://sandbox.gibm.ch/klassen.php?beruf_id=' + berufId,
             method: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -40,16 +54,22 @@ $(document).ready(function(){
                         dropdown.prop('disabled', false);
                     }
                 })
+                
+                if (classId) {
+                    dropdown.val(classId);
+                }
             },
             error: function() {
                 alert('Es gab ein Problem beim Laden der Klassen.');
                 console.log('Es gab ein Problem beim Laden der Klassen.');
             }
         });
-    });
+    }
 
-    $('#dropdownKlasse').change(function() { // TODO: local storage
+    $('#dropdownKlasse').change(function() {
         let classId = $(this).val();
+        localStorage.setItem('classId', classId);
+
         if(classId) {
             let weekNumber = moment(calendar.view.currentStart).format('ww-YYYY');
             updateCalendarWithClassSchedule(classId, weekNumber);
@@ -145,5 +165,21 @@ $(document).ready(function(){
                 console.log('Es gab ein Problem beim Laden des Stundenplans.');
             }
         });
+    }
+
+    let storedBerufId = localStorage.getItem('berufId');
+    if (storedBerufId) {
+        setBerufdropdown(storedBerufId);
+
+        $('#dropdownBeruf').val(storedBerufId).trigger('change');
+        $('#dropdownKlasse').prop('disabled', false);
+
+        let storedClassId = localStorage.getItem('classId');
+        if (storedClassId) {
+            setKlassenDropdown(storedBerufId, storedClassId);
+            updateCalendarWithClassSchedule(storedClassId, moment(calendar.view.currentStart).format('ww-YYYY'));
+        }
+    } else {
+        setBerufdropdown();
     }
 });
