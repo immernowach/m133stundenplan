@@ -1,10 +1,10 @@
 $(document).ready(function(){
-    function setCalendarWeek(date) {
+    function setCalendarWeek(date) { // Aktuelle Kalenderwoche anzeigen
         let weekNumber = moment(date).week();
         $('#calendarWeek').text('Aktuelle Kalenderwoche: ' + weekNumber);
     }
 
-    function setBerufdropdown(beruf_id) {
+    function setBerufdropdown(beruf_id) { // Berufe in das Dropdown laden
         $.ajax({ 
             url: 'https://sandbox.gibm.ch/berufe.php',
             method: 'GET',
@@ -18,25 +18,16 @@ $(document).ready(function(){
                     }
                 })
                 
-                if(beruf_id) {
+                if(beruf_id) { // Für den localStorage
                     dropdown.val(beruf_id);
                 }
             },
-            error: function() {
+            error: function() { // Error Handling
                 alert('Es gab ein Problem beim Laden der Berufe.');
                 console.log('Es gab ein Problem beim Laden der Berufe.');
             }
         });
     }
-
-    $('#dropdownBeruf').change(function() {
-        let berufId = $(this).val();
-
-        if(berufId) {
-            localStorage.setItem('berufId', berufId);
-            setKlassenDropdown(berufId);
-        }
-    });
 
     function setKlassenDropdown(berufId, classId) {
         $.ajax({
@@ -66,7 +57,53 @@ $(document).ready(function(){
         });
     }
 
-    $('#dropdownKlasse').change(function() {
+    function updateCalendarWithClassSchedule(classId, weekNumber) { // Stundenplan in den Kalender laden
+        $.ajax({
+            url: 'https://sandbox.gibm.ch/tafel.php',
+            method: 'GET',
+            data: {
+                klasse_id: classId,
+                woche: weekNumber
+            },
+            dataType: 'json',
+            success: function(data) {
+                calendar.removeAllEvents();
+                data.forEach(function(entry) {
+                    calendar.addEvent({
+                        title: entry.tafel_longfach,
+                        start: entry.tafel_datum + 'T' + entry.tafel_von,
+                        end: entry.tafel_datum + 'T' + entry.tafel_bis,
+                        extendedProps: {
+                            lehrer: entry.tafel_lehrer,
+                            raum: entry.tafel_raum,
+                            kommentar: entry.tafel_kommentar
+                        }
+                    });
+                });
+                $('#calendar').addClass('updated'); // Animation beim Laden des Stundenplans
+                setTimeout(function() { // Animation beim Laden des Stundenplans wieder entfernen
+                    $('#calendar').removeClass('updated');
+                }, 2500);
+            },
+            error: function() { // Error Handling
+                alert('Es gab ein Problem beim Laden des Stundenplans.');
+                console.log('Es gab ein Problem beim Laden des Stundenplans.');
+            }
+        });
+    }
+
+    // Dropdowns
+
+    $('#dropdownBeruf').change(function() { // auf Veränderung des Dropdowns "Beruf" reagieren
+        let berufId = $(this).val();
+
+        if(berufId) {
+            localStorage.setItem('berufId', berufId);
+            setKlassenDropdown(berufId);
+        }
+    });
+
+    $('#dropdownKlasse').change(function() { // auf Veränderung des Dropdowns "Klasse" reagieren
         let classId = $(this).val();
         localStorage.setItem('classId', classId);
 
@@ -77,6 +114,8 @@ $(document).ready(function(){
             calendar.removeAllEvents();
         }
     });
+
+    // Kalender
 
     let calendar = new FullCalendar.Calendar($('#calendar')[0], {
         initialView: 'dayGridWeek',
@@ -115,57 +154,23 @@ $(document).ready(function(){
         }
     });
 
-    $('#close').on('click', function() {
+    $('#close').on('click', function() { // Kalender Popup schliessen
         $('#eventDetails').hide();
     });
 
-    $('#dayView').on('click', function() {
+    $('#dayView').on('click', function() { // Kalenderansicht ändern
         calendar.changeView('dayGridDay');
     });
 
-    $('#weekView').on('click', function() {
+    $('#weekView').on('click', function() { // Kalenderansicht ändern
         calendar.changeView('dayGridWeek');
     });
 
-    calendar.setOption('locale', 'de-ch');
-    calendar.render();
+    calendar.setOption('locale', 'de-ch'); // Sprache vom Kalender auf Deutsch setzen
+    calendar.render();  // Kalender anzeigen
+    setCalendarWeek(new Date()); // Aktuelle Kalenderwoche anzeigen
 
-    setCalendarWeek(new Date());
-
-    function updateCalendarWithClassSchedule(classId, weekNumber) {
-        $.ajax({
-            url: 'https://sandbox.gibm.ch/tafel.php',
-            method: 'GET',
-            data: {
-                klasse_id: classId,
-                woche: weekNumber
-            },
-            dataType: 'json',
-            success: function(data) {
-                calendar.removeAllEvents();
-                data.forEach(function(entry) {
-                    calendar.addEvent({
-                        title: entry.tafel_longfach,
-                        start: entry.tafel_datum + 'T' + entry.tafel_von,
-                        end: entry.tafel_datum + 'T' + entry.tafel_bis,
-                        extendedProps: {
-                            lehrer: entry.tafel_lehrer,
-                            raum: entry.tafel_raum,
-                            kommentar: entry.tafel_kommentar
-                        }
-                    });
-                });
-                $('#calendar').addClass('updated');
-                setTimeout(function() {
-                    $('#calendar').removeClass('updated');
-                }, 2500);
-            },
-            error: function() {
-                alert('Es gab ein Problem beim Laden des Stundenplans.');
-                console.log('Es gab ein Problem beim Laden des Stundenplans.');
-            }
-        });
-    }
+    // localStorage nutzen, um die zuletzt ausgewählten Elemente anzuzeigen
 
     let storedBerufId = localStorage.getItem('berufId');
     if (storedBerufId) {
@@ -179,7 +184,7 @@ $(document).ready(function(){
             setKlassenDropdown(storedBerufId, storedClassId);
             updateCalendarWithClassSchedule(storedClassId, moment(calendar.view.currentStart).format('ww-YYYY'));
         }
-    } else {
+    } else { // Wenn keine Daten im localStorage vorhanden sind, die Dropdowns mit Daten füllen
         setBerufdropdown();
     }
 });

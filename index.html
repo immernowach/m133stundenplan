@@ -14,6 +14,7 @@
 <body>
     <div class="container">
         <h1 class="text-center my-4">BBZBL Stundenplan</h1>
+        <!-- Dropdowns -->
         <div class="mb-3">
             <label for="dropdownBeruf" class="form-label">Beruf auswählen: </label>
             <select class="form-select" id="dropdownBeruf" name="Beruf auswählen">
@@ -27,18 +28,22 @@
             </select>
         </div>
 
+        <!-- Ansicht verwalten -->
         <table>
-            <td>
-                <button id="dayView" class="btn btn-secondary w-100">Tagesansicht</button>
-            </td>
-            <td>
-                <button id="weekView" class="btn btn-secondary w-100">Wochenansicht</button>
-            </td>
-            <td>
-                <div id="calendarWeek"></div>
-            </td>
+            <tr>
+                <td>
+                    <button id="dayView" class="btn btn-secondary w-100">Tagesansicht</button>
+                </td>
+                <td>
+                    <button id="weekView" class="btn btn-secondary w-100">Wochenansicht</button>
+                </td>
+                <td>
+                    <div id="calendarWeek"></div>
+                </td>
+            </tr>
         </table>
 
+        <!-- Kalender -->
         <div id='calendar' class="mt-4"></div>
         <div id="eventDetails" class="custom-popup">>
             <div class="custom-popup-content">
